@@ -16,7 +16,7 @@ with "1234" being a custom port number"
 Your web application will be served at http://localhost:8888 by default or http://localhost:1234 with "1234" being the custom port you passed.
 
 Mime Types:
-You can add to the mimeTypes has to serve more file types.
+You can add to the mimeTypes hash to serve more file types.
 
 Virtual Directories:
 Add to the virtualDirectories hash if you have resources that are not children of the root directory
@@ -25,11 +25,10 @@ Add to the virtualDirectories hash if you have resources that are not children o
 var http = require("http"),
     url = require("url"),
     path = require("path"),
-    fs = require("fs")
-    port = process.argv[2] || 8888;
-
-var spawn = require('child_process').spawn,
-
+    fs = require("fs"),
+    spawn = require('child_process').spawn,
+    port = (process.argv[2] || 8888),
+    prerender = process.argv[3] || false;
 
 var mimeTypes = {
     "htm": "text/html",
@@ -40,7 +39,6 @@ var mimeTypes = {
     "gif": "image/gif",
     "js": "text/javascript",
     "css": "text/css"};
-
 
 var virtualDirectories = {
     //"images": "../images/"
@@ -81,11 +79,30 @@ http.createServer(function(request, response) {
 
       var mimeType = mimeTypes[path.extname(filename).split(".")[1]];
       response.writeHead(200, {"Content-Type": mimeType});
-      response.write(file, "binary");
-      response.end();
-      console.log('200: ' + filename + ' as ' + mimeType);
+
+      if(prerender && mimeType === mimeTypes.html){
+          phantom = spawn('phantomjs', ['render.js', filename]);
+
+          phantom.stdout.on('data', function (data) {
+              response.write(data, "utf8");
+              response.end();
+              console.log('200: ' + filename + ' as ' + mimeType);
+          });
+          phantom.stderr.on('data', function (data) {
+              console.log('stderr: ' + data);
+          });
+
+          phantom.on('exit', function (code) {
+              console.log('child process exited with code ' + code);
+          });
+      }else{
+          response.write(file, "binary");
+          response.end();
+          console.log('200: ' + filename + ' as ' + mimeType);
+      }
     });
   });
 }).listen(parseInt(port, 10));
+
 
 console.log("Static file server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown");
