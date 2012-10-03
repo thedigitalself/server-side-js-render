@@ -7,7 +7,7 @@ All of these examples require [PhantomJS](http://phantomjs.org)
 
 ##Basic
 
-This is a very simple example using a nodejs server and a trivial abount of javascript to show off the gist of the concept. In this example, the index.html displas a simple message. This page is passed to a PhantomJS script via a nodeJs static server. The node server can be initialized with pre-rendering enabled or disabled. When pre-rendering is disabled viewing the source (not the element inspector), will reveal an empty h1 tag even though the message is displayed. Ehen pre-rendering is enabled, viewing the source will reveal that the h1 tag has a value equal to the javascript assignment. If you were a search engine spider, that h1 would look like it was part of a static page and not dynamic javascript.
+This is a very simple example using a nodejs server and a trivial amount of javascript to show off the gist of the concept. In this example, the index.html displays a simple message. This page is passed to a PhantomJS script via a nodeJs static server. The node server can be initialized with pre-rendering enabled or disabled. When pre-rendering is disabled, viewing the source (not the element inspector), will reveal an empty h1 tag even though the message is displayed. When pre-rendering is enabled, viewing the source will reveal that the h1 tag has a value equal to the javascript assignment. If you were a search engine spider, that h1 would look like it was part of a static page and not dynamic javascript.
 
 Starting the server with pre-rendering disabled.
 
